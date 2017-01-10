@@ -1,0 +1,6 @@
+# Python 3.4.1
+
+requests
+bs4
+pandas
+csv
