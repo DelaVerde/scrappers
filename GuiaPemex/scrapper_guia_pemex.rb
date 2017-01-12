@@ -7,15 +7,21 @@ class ScrapperGuiaPemex
   require "./utils/services_fuelstation"
   include ServicesFuelStation
   def open(url)
-    Net::HTTP.get(URI.parse(url))
+    value_return=nil
+    begin
+      value_return=Net::HTTP.get(URI.parse(url))
+    rescue Exception
+      puts "La url que arrojo un error #{url}"
+    end
+    value_return
   end
 
-  def initialize list_types_fuel: ServicesFuelStation::LIST_TYPE_FUEL, list_services: ServicesFuelStation::LIST_SERVICES
+  def initialize list_types_fuel: ServicesFuelStation::LIST_TYPE_FUEL, list_services: ServicesFuelStation::LIST_SERVICES, list_states:ServicesFuelStation::STATES
     @list_types_fuel=list_types_fuel
-    @list_services=list_services
-    @list_hash_station=Hash.new
-    @list_info_station=Hash.new
-    @list_station_id=[]
+    @list_states=list_states
+    @list_stations=[]
+    @list_id=[]
+    @threshold=15000
   end
 
 
@@ -29,51 +35,32 @@ class ScrapperGuiaPemex
   end
 
 
-  def get_stations_from_json content, service
+  def get_stations_from_json content
     list_fuel_station=JSON.parse content
     list_fuel_station.each do |station|
-      if !@list_hash_station.key?(station["id"])
-        @list_hash_station[station["id"]]=Hash.new
-        @list_hash_station[station["id"]]["services"]=Array.new
-        @list_hash_station[station["id"]]["services"].push service
-        ob=ScrapperDetailStation.new station["id"]
-        @list_info_station[station["id"]]=ob
-        @list_station_id.push station["id"]
-      else
-        @list_hash_station[station["id"]]["services"].push service
-      end
+      next if @list_id.include?(station["id"])
+      station_ob=ScrapperDetailStation.new(station["id"])
+      @list_stations.push  station_ob.to_hash
+      @list_id.push station["id"]
     end
   end
 
-  def get_last_stations_json
-    fileObj = File.new("./output/gasolineras_servicios.json", "r")
-    content_gasolineras_servicios=""
-    while (line = fileObj.gets)
-      content_gasolineras_servicios<<line
-    end
-    fileObj.close
-    if content_gasolineras_servicios.length>0
-      @hash_gasolineras=JSON.parse content_gasolineras_servicios
-    end
-  end
 
   def run
-    @list_types_fuel.each do |type_fuel|
-      @list_services.each do |service|
-        page_content=open(get_url(type_fuel, service))
-        #File.open("./output/listagasolineras_#{ServicesFuelStation::LABELS[service]}_#{ServicesFuelStation::TYPE_FUEL[type_fuel]}.json", 'w') { |file| file.write(page_content) } #Permite guardar los jsons de cada servicio
-        get_stations_from_json page_content, ServicesFuelStation::LABELS[service]
+    @list_states.each do |state_name|
+      break if @list_stations.size>@threshold
+      @list_types_fuel.each do |type_fuel|
+          page_content=open(get_url(type_fuel, "",state_name))
+          if page_content!=nil
+            get_stations_from_json page_content
+          end
       end
     end
     convert_to_json_all_station_with_services
   end
   def convert_to_json_all_station_with_services
-    list_of_objects=[]
-    @list_station_id.each do |station_id|
-      @list_info_station[station_id].add_services @list_hash_station[station_id]["services"]
-      list_of_objects.push @list_info_station[station_id].to_hash
-    end
-    write_to_file "./output/gasolineras_con_servicios.json",list_of_objects
-    puts "Total de estaciones #{list_of_objects.size}"
+    write_to_file "./output/stations_with_services.json",@list_stations
+    puts "Total stations #{@list_stations.size}"
   end
+
 end

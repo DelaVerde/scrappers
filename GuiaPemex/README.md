@@ -45,7 +45,6 @@ LIST_SERVICES=[
 LIST_TYPE_FUEL=[:d,:m,:p]
 
 ## Posibles correcciones
-## Posibles correcciones
 
 Observe que GuiaPemex carga las gasolineras del mapa, conforme al valor de Z, mientras mas cercas, puede que que carguen mas gasolineras.
 
@@ -58,4 +57,13 @@ Parámetros relevantes:
 	latsw =Latitud suroeste
 	lonsw= Longitud suroeste
 
-Una posible solución, es encontrar estos 4 valores, por cada estado, y estar iterando sobre cada cuadrante (los estados con sus coordenadas militantes)
+Una posible solución, es encontrar estos 4 valores, por cada estado, y estar iterando sobre cada cuadrante (los estados con sus coordenadas limitantes)
+
+  **Actualización 11/01/2017**
+
+Se redujo el proceso a obtener los servicios usando Nokogiri, para hacer scrapping del documento html del detalle de la gasolinera, en lugar de iterar en peticiones para obtener las estaciones por cada servicio.
+
+Cree un script en javascript, para poder iterar sobre cada estado y obtener la Latne,Lonne,Latsw y Lonsw. Lo que hice fue correr el script para generar en diferentes valores de zoom (5,6,7,8,9,10).
+Si bien me genero un resultset mayor al anterior, lo que me di cuenta fue de que, a pesar de que todo el estado pueda ser visible, siguen apareciendo estaciones en la periferia, los cuales con las coordenadas aun no pude sacar, con el sitio de pemex uno puede moverse en la periferia y se verán gasolineras cargándose a la redonda.
+
+Por cada valor en zoom, genere un fichero, los cuales uní en el archivo gasolineras_totales.json, en un repositorio a parte subo las coordenadas por cada estado.
