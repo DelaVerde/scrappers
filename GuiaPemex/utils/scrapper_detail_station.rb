@@ -12,11 +12,11 @@ class ScrapperDetailStation
   def scrapping
     page = Nokogiri::HTML(RestClient.get("http://guiapemex.pemex.com/Paginas/DetalleGas.aspx?val=#{@id}&GetFrag=1"))
     #@id=id
-    @name=page.css("div.body-content div.data.hide")[0]["data-place_name"]
+    #@name=page.css("div.body-content div.data.hide")[0]["data-place_name"]
     @magna=page.css('div#magna p.price')[0].text   # => Nokogiri::HTML::Document
     @premium=page.css('div#premium p.price')[0].text
     @diesel=page.css('div#diesel p.price')[0].text
-    @address=page.css("div#info p.address")[0].text
+    #@address=page.css("div#info p.address")[0].text
     @lat=page.css("div.body-content div.data.hide")[0]["data-place_latitude"]
     @lng=page.css("div.body-content div.data.hide")[0]["data-place_longitude"]
   end
@@ -27,17 +27,14 @@ class ScrapperDetailStation
 
   def to_hash
     {
-      id: @id,
-      place_name: @name,
-      place_address:@address,
-      place_latitude:@lat,
-      place_longitude:@lng,
-      services:@services,
-      prices:{
-        magna: @magna,
-        premium:@premium,
-        diesel:@diesel,
-      }
+        id: @id,
+        place_latitude:@lat,
+        place_longitude:@lng,
+        prices:{
+            magna: @magna,
+            premium:@premium,
+            diesel:@diesel,
+        }
     }
   end
 

@@ -65,9 +65,9 @@ class ScrapperGuiaPemex
         get_stations_from_json page_content, ServicesFuelStation::LABELS[service]
       end
     end
-    convert_to_json_all_station_with_services
+    convert_to_json_all_station_with_prices
   end
-  def convert_to_json_all_station_with_services
+  def convert_to_json_all_station_with_prices
     list_of_objects=[]
     @list_station_id.each do |station_id|
       @list_info_station[station_id].add_services @list_hash_station[station_id]["services"]
