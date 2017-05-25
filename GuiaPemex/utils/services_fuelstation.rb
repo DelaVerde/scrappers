@@ -19,7 +19,4 @@ module ServicesFuelStation
 
   TYPE_FUEL={d:"d",m:"m",p:"p"}
 
-  def get_url type_fuel, service
-    filter_page_station TYPE_FUEL[type_fuel], SERVICES[service]
-  end
 end

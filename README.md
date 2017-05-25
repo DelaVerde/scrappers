@@ -1,2 +1,2 @@
 # Scrappy Doo 
-De la Verde scrappers from different sources.
+De la Verde's scrappers from different sources.
