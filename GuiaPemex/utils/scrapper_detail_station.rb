@@ -11,7 +11,6 @@ class ScrapperDetailStation
 
   def scrapping
     page = Nokogiri::HTML(RestClient.get("http://guiapemex.pemex.com/Paginas/DetalleGas.aspx?val=#{@id}&GetFrag=1"))
-    #@id=id
     #@name=page.css("div.body-content div.data.hide")[0]["data-place_name"]
     @magna=page.css('div#magna p.price')[0].text   # => Nokogiri::HTML::Document
     @premium=page.css('div#premium p.price')[0].text
