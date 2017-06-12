@@ -3,10 +3,13 @@ require "json"
 require 'net/http'
 require 'uri'
 require 'nokigiri'
-require 'crack'     # XML and JSON parsing
+
+#forXML and JSON parsing
+require 'crack'
 
 
 class ScrapperCRE
+  # TODO: see if this require is actually needed
   require "./utils/services_fuelstation"
   include ServicesFuelStation
   def open(url)
@@ -21,7 +24,7 @@ class ScrapperCRE
     @list_station_id=[]
   end
 
-
+  #TODO: hast_to_xml?
   def convert_hash_to_json hash_param
     hash_param.to_json
   end
@@ -59,6 +62,8 @@ class ScrapperCRE
       @hash_gasolineras=JSON.parse content_gasolineras_servicios
     end
   end
+
+  #TODO: def get_xml_file
 
   def run
     @list_types_fuel.each do |type_fuel|
